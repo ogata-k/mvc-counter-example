@@ -6,22 +6,29 @@ import android.widget.TextView
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), ControllerView<CounterViewModel, CounterController> {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        setupView()
+    }
 
+    override fun controller(): CounterController {
         val vm = ViewModelProvider(this).get(CounterViewModel::class.java)
-        val controller = CounterController(vm)
+        return CounterController(vm)
+    }
 
-        // set view
+    private fun setupView() {
+        val controller = controller()
+        val vm = controller.vm
+
         val countTextView = findViewById<TextView>(R.id.countText)
         vm.count.observe(this) {
             countTextView.text = it.toString()
         }
 
         val countUpButton = findViewById<FloatingActionButton>(R.id.countupButton)
-        countUpButton.setOnClickListener{
+        countUpButton.setOnClickListener {
             controller.countUp()
         }
     }
